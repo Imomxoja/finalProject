@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <link rel="stylesheet" href="/css/style.css">-->
+    <link rel="stylesheet" href="/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Mr+Dafoe" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <title>Dashboard</title>
+</head>
+<body>
+<input type="checkbox" id="active">
+<label for="active" class="menu-btn"><span></span></label>
+<label for="active" class="close"></label>
+<nav class="nav">
+    <div class="nav-right">
+        <select class="custom-select-le" onchange="location.href = this.value;">
+            <option class="opt" value="1" selected><p th:text="${#authentication.principal.name}"></p></option>
+            <option class="logout" value="/logout">Logout</option>
+        </select>
+        <img class="nav-icon" src="./images/user3.png" alt="User">
+    </div>
+</nav>
+<div class="wrapper">
+    <ul>
+        <li><a href="/dashboard/categories">Categories</a></li>
+        <li><a href="/dashboard/products">Products</a></li>
+        <li><a href="/dashboard/orders">Orders</a></li>
+        <li><a sec:authorize="hasRole('SUPER_ADMIN')" href="/dashboard/employees">Employees</a></li>
+    </ul>
+</div>
+<div class="content">
+    <div style="text-align: left; margin-left: 18px" class="title">
+        Welcome to personal dashboard</div>
+</div>
+</body>
+</html>

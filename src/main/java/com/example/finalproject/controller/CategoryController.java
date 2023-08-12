@@ -1,0 +1,78 @@
+package com.example.finalproject.controller;
+
+import com.example.finalproject.domain.dto.request.CategoryRequest;
+import com.example.finalproject.domain.dto.response.BaseResponse;
+import com.example.finalproject.domain.dto.response.CategoryResponse;
+import com.example.finalproject.service.category.CategoryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/dashboard/categories")
+public class CategoryController {
+    private final CategoryService categoryService;
+
+    @GetMapping
+    public String getList(Model model, String keyword) {
+        if (Objects.nonNull(keyword)) {
+            model.addAttribute("categories", categoryService.findByKeyword(keyword).getData());
+        } else {
+            List<CategoryResponse> all = categoryService.getParentCategories();
+            model.addAttribute("categories",all);
+        }
+        return "categories";
+    }
+    @PostMapping("/add")
+    public String addCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
+        BaseResponse<CategoryResponse> response = categoryService.create(categoryRequest);
+        model.addAttribute("categories", response.getMessage());
+        return "redirect:/dashboard/categories";
+    }
+    @PostMapping("/delete")
+    public String deleteCategory(@RequestParam("id") UUID id) {
+        categoryService.delete(id);
+        return "redirect:/dashboard/categories";
+    }
+    @PostMapping("/update")
+    public String updateCategory(@RequestParam("id") UUID id, @ModelAttribute CategoryRequest categoryRequest) {
+        categoryService.update(categoryRequest, id);
+        return "redirect:/dashboard/categories";
+    }
+
+    @GetMapping("/children/{categoryId}")
+    public String categoryChild(@PathVariable("categoryId") UUID categoryId, Model model, String keyword) {
+        if (Objects.nonNull(keyword)) {
+            model.addAttribute("categories", categoryService.findByKeywordForChild(keyword, categoryId).getData());
+            model.addAttribute("parentId",categoryId);
+        } else {
+            List<CategoryResponse> all = categoryService.getChildCategories(categoryId);
+            model.addAttribute("categories",all);
+            model.addAttribute("parentId",categoryId);
+        }
+
+        return "category-child";
+    }
+    @PostMapping("/children/add")
+    public String addChildCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
+        BaseResponse<CategoryResponse> response = categoryService.create(categoryRequest);
+        model.addAttribute("categories", response.getMessage());
+        return "redirect:/dashboard/categories/children/" + categoryRequest.getParentId();
+    }
+    @PostMapping("/children/update")
+    public String updateChildCategory(@RequestParam("id") UUID id, @RequestParam("parent") UUID parentId, @ModelAttribute CategoryRequest categoryRequest) {
+        categoryService.update(categoryRequest, id);
+        return "redirect:/dashboard/categories/children/" + parentId;
+    }
+    @PostMapping("/children/delete")
+    public String deleteChildCategory(@RequestParam("id") UUID id, @RequestParam("parent") UUID parentId) {
+        categoryService.delete(id);
+        return "redirect:/dashboard/categories/children/" + parentId;
+    }
+}
