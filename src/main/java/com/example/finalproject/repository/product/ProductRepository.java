@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     List<ProductEntity> findProductEntityByCategory_Id (UUID id);
     Optional<ProductEntity> findProductEntityByName (String name);
-
+//d
     @Modifying
     @Transactional
     @Query("update products p set p.amount = p.amount - :amount where p.id = :id")

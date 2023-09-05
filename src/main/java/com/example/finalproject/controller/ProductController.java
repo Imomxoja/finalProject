@@ -26,7 +26,7 @@ import java.util.UUID;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-
+//dd
     @GetMapping("/get-one")
     @ResponseBody
     public Optional<ProductEntity> showEditModal(@RequestParam("id") UUID productId) {

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HistoryService implements BaseService<BaseResponse<HistoryResponse>, HistoryRequest> {
     private final HistoryRepository historyRepository;
-    private final ModelMapper mapper;
+    private final ModelMapper mapper;//d
     public List<HistoryResponse> getUserHistories(Long chatId) {
         return historyRepository.getUserHistories(chatId).stream()
                 .map((history) -> mapper.map(history, HistoryResponse.class))

@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
     @Query(value = "select u from orders u where u.orderState <> 'IN_CART'")
     List<OrderEntity> findAllByStateNotInCart();
-
+//d
     @Query("select o from orders o where o.user.chatId = :chatId and o.orderState = 'IN_CART'")
     List<OrderEntity> findByChatId(@Param("chatId") Long chatId);
 

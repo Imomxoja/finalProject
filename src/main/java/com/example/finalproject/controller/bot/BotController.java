@@ -20,7 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 @RequiredArgsConstructor
 public class BotController extends TelegramLongPollingBot {
     private final BotService botService;
-
+//dd
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {

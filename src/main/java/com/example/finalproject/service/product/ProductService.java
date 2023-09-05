@@ -272,31 +272,7 @@ public class ProductService implements BaseService<BaseResponse<ProductResponse>
                 .status(400)
                 .build();
     }
-//                userService.updateBalance(order.getUser().getId(),
-//                        order.getAmount() * order.getProduct().getPrice());
 
-//                BaseResponse<ProductResponse> response =
-//                        updateProduct(order.getAmount(), order.getProduct().getId());
-//                if (response.getStatus() == 400) {
-//                    return BaseResponse.<OrderResponse>builder()
-//                            .message(response.getMessage())
-//                            .status(400)
-//                            .build();
-//                }
-//                historyService.create(
-//                        HistoryRequest.builder()
-//                                .productName(order.getProduct().getName())
-//                                .price(order.getProduct().getPrice())
-//                                .totalPrice(order.getAmount() * order.getProduct().getPrice())
-//                                .amount(order.getAmount())
-//                                .user(order.getUser())
-//                                .build()
-//                );
-//                    updateHistory(historyService.getUserHistories(
-//                                    update.getUser().getChatId()),
-//                            update.getProduct().getName(),
-//                            update.getUser().getId(),
-//                            amount, amount * update.getProduct().getPrice());
     public BaseResponse<OrderResponse> order(String data) {
         BaseResponse<OrderResponse> orderResponse = orderService.getById(UUID.fromString(data));
 

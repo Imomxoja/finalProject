@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface HistoryRepository extends JpaRepository<HistoryEntity, UUID> {
     @Query("select h from histories h where h.user.chatId = :chatId")
     List<HistoryEntity> getUserHistories(@Param("chatId") Long chatId);
-
+//d
     @Modifying
     @Transactional
     @Query("update histories h set h.amount = :amount, h.totalPrice = :total where h.id = :id")
