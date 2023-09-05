@@ -282,7 +282,7 @@ public class BotService {
         EditMessageText edit = new EditMessageText();
         String text;
         if (response.getStatus() != 400) {
-            text = "All orders have been purchased successfully";
+            text = "All orders have been saved successfully, Please wait admin's response";
         } else {
             text = response.getMessage();
         }
@@ -343,11 +343,7 @@ public class BotService {
         BaseResponse<OrderResponse> order = productService.order(data);
         EditMessageText edit = new EditMessageText();
         String text;
-        if (order.getStatus() != 400) {
-            text = "order have been purchased successfully";
-        } else {
-            text = order.getMessage();
-        }
+        text = order.getMessage();
         edit.setText(text);
         edit.setMessageId(messageId);
         edit.setChatId(chatId);

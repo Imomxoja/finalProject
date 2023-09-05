@@ -1,7 +1,9 @@
 package com.example.finalproject.repository.category;
 
 import com.example.finalproject.domain.entity.category.CategoryEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -28,4 +30,9 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> 
 
     @Query("SELECT c FROM category c WHERE LOWER(c.type) = LOWER(:keyword) AND c.parent = :parentObj")
     List<CategoryEntity> searchKeywordForChild(@Param("keyword") String keyword, @Param("parentObj") CategoryEntity parentObj);
+
+    @Transactional
+    @Modifying
+    @Query("update category c set c.type = :type where c.id = :id")
+    void updateCategoryType(@Param("type") String type, @Param("id") UUID id);
 }

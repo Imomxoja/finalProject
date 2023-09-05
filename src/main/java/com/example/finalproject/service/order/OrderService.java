@@ -49,27 +49,7 @@ public class OrderService implements BaseService<BaseResponse<OrderResponse>, Or
 
     @Override
     public BaseResponse<OrderResponse> update(OrderRequest orderRequest, UUID id) {
-        Optional<OrderEntity> order = orderRepository.findById(id);
-        if (order.isPresent()){
-            OrderEntity map = mapper.map(orderRequest, OrderEntity.class);
-            if (Objects.equals(map.getOrderState(),"DELIVERED")){
-                orderRepository.deleteById(map.getId());
-                return BaseResponse.<OrderResponse>builder()
-                        .message("Order deleted")
-                        .status(205)
-                        .build();
-            }
-            OrderEntity save = orderRepository.save(map);
-            return BaseResponse.<OrderResponse>builder()
-                    .message("Success")
-                    .status(200)
-                    .data(mapper.map(save,OrderResponse.class))
-                    .build();
-        }
-        return BaseResponse.<OrderResponse>builder()
-                .status(500)
-                .message("Order not found")
-                .build();
+        return null;
     }
 
     @Override
@@ -157,6 +137,7 @@ public class OrderService implements BaseService<BaseResponse<OrderResponse>, Or
             }
             if (orderId.charAt(0) == '-') {
                 orderRepository.minusOrderAmount(byId.get().getId());
+                productRepository.plusProductAmount(1, byId.get().getProduct().getId());
                 if (byId.get().getAmount() == 0) {
                     orderRepository.deleteById(byId.get().getId());
                     return  BaseResponse.<OrderResponse>builder()

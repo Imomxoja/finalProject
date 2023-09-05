@@ -4,6 +4,7 @@ import com.example.finalproject.domain.dto.request.OrderRequest;
 import com.example.finalproject.domain.dto.response.BaseResponse;
 import com.example.finalproject.domain.dto.response.OrderResponse;
 import com.example.finalproject.service.order.OrderService;
+import com.example.finalproject.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/dashboard/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final ProductService productService;
     @PostMapping("/add")
     public String updateEmployee(@ModelAttribute OrderRequest userRequest, Model model) {
         BaseResponse<OrderResponse> response = orderService.create(userRequest);
@@ -35,26 +37,7 @@ public class OrderController {
     }
     @PostMapping("/update")
     public String updateUser(@RequestParam("id") UUID id, @ModelAttribute OrderRequest orderRequest) {
-        orderService.update(orderRequest, id);
+        productService.buyOrUpdate(orderRequest, id);
         return "redirect:/dashboard/orders";
-
-
-        //    @PostMapping("/add")
-//    public String updateEmployee(@ModelAttribute ProductRequest productRequest) {
-//        orderService.create(productRequest);
-//
-//        return "redirect:/dashboard/products";
-//    }
-
-//    @PostMapping("/delete")
-//    public String deleteWorker(@RequestParam("id") UUID id) {
-//        productService.delete(id);
-//        return "redirect:/dashboard/products";
-//    }
-//    @PostMapping("/update")
-//    public String updateUser(@RequestParam("id") UUID id, @ModelAttribute ProductRequest productRequest) {
-//        productService.update(productRequest, id);
-//        return "redirect:/dashboard/products";
-//    }
     }
 }

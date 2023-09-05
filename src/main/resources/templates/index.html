@@ -13,9 +13,113 @@
             rel="stylesheet">
     <link rel="stylesheet"  href="/css/login.css">
 </head>
+<style>
+    body {
+        background-color: #050A24;
+        background-image: url("../images/bg.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
+    .form {
+        background: #FFFFFF;
+        border-radius: 8px;
+        width: 540px;
+        height: 456px;
+        margin-top: 200px;
+    }
+
+    .form-title {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 28px;
+        line-height: 100%;
+        text-align: center;
+        color: #101012;
+        padding-top: 48px;
+    }
+
+    .form-text {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 100%;
+        text-transform: capitalize;
+        color: #5A5A5D;
+        margin-top: 32px;
+    }
+
+    .form-phone {
+        width: 373px;
+        /* -23 */
+        padding-left: 16px;
+        border: 1px solid #BEBEBF;
+        border-radius: 8px;
+        height: 48px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        color: #5A5A5D;
+        outline: none;
+    }
+
+    .form-password {
+        width: 373px;
+        /* -23 */
+        padding-left: 16px;
+        border: 1px solid #BEBEBF;
+        border-radius: 8px;
+        height: 48px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+        color: #BEBEBF;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .form-submit {
+        width: 396px;
+        background-color: #007DFA;
+        border: 2px solid #007DFA;
+        margin-top: 32px;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        border-radius: 8px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 100%;
+        color: #FFFFFF;
+        outline: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .form-submit:hover {
+        background-color: white;
+        color: #007DFA;
+        border: 2px solid #007DFA;
+    }
+
+    .form-box {
+        width: 396px;
+        margin-left: 72px;
+        display: block;
+    }
+</style>
 <body>
-<!--/*@thymesVar id="loginDto" type="uz.g4.ecommerce.domain.dto.request.UserLoginRequest"*/-->
+<!--/*@thymesVar id="loginDto" type="com.example.finalproject.domain.dto.request.UserLoginRequest"*/-->
 <form class="form" th:action="@{/auth/login}" method="post" th:object="${loginDto}">
     <div class="form-box">
         <h1 class="form-title">Login to your account</h1>

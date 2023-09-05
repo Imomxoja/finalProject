@@ -17,7 +17,6 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     Optional<UserEntity> findByUsername(String username);
-    UserEntity findUserEntitiesById(UUID id);
     boolean existsByUsername(String username);
 
     @Query(value = "SELECT u FROM users u WHERE LOWER(u.name) LIKE CONCAT('%', LOWER(:keyword), '%') OR LOWER(u.username)" +

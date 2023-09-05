@@ -76,12 +76,17 @@ public class CategoryService implements BaseService<BaseResponse<CategoryRespons
                         .data(mapper.map(category, CategoryResponse.class))
                         .build();
             }
-            category.get().setType(categoryRequest.getType());
-            repository.save(category.get());
+            if (!categoryRequest.getType().isBlank()) {
+                repository.updateCategoryType(categoryRequest.getType(), id);
+                return BaseResponse.<CategoryResponse>builder()
+                        .message("Success")
+                        .status(200)
+                        .data(mapper.map(category, CategoryResponse.class))
+                        .build();
+            }
             return BaseResponse.<CategoryResponse>builder()
-                    .message("Success")
-                    .status(200)
-                    .data(mapper.map(category, CategoryResponse.class))
+                    .message("fail")
+                    .status(400)
                     .build();
         }
         return BaseResponse.<CategoryResponse>builder()

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/auth/v1/api")
@@ -22,43 +23,7 @@ public class AddSuperAdminController {
     @GetMapping("/super-admin")
     public BaseResponse<UserResponse> addSuperAdmin() {
         Set<Permission> perm = Set.of(Permission.ADD, Permission.EDIT, Permission.GET, Permission.DELETE);
-//        int count=0;
-//        while (count<25){
-//            UserRequest user = new UserRequest();
-//            if(count<5){
-//                user.setName("Sardor");
-//                user.setUsername("Alimov_Sardor"+ count);
-//                user.setPassword("123");
-//                user.setRoles(Set.of(Role.ADMIN));
-//                user.setPermissions(Set.of(Permission.ADD));
-//            }if(5<=count&&count<10){
-//                user.setName("Malika");
-//                user.setUsername("Alimova_Malika"+ count);
-//                user.setPassword("123");
-//                user.setRoles(Set.of(Role.ACCOUNTANT));
-//                user.setPermissions(Set.of(Permission.EDIT));
-//            }if(10<=count&&count<15){
-//                user.setName("Lola");
-//                user.setUsername("Lola_Hamidova"+ count);
-//                user.setPassword("123");
-//                user.setRoles(Set.of(Role.ADMIN));
-//                user.setPermissions(Set.of(Permission.EDIT));
-//            }if(15<=count&&count<20){
-//                user.setName("Jorabek");
-//                user.setUsername("Jorabek_Komilov"+ count);
-//                user.setPassword("123");
-//                user.setRoles(Set.of(Role.ADMIN));
-//                user.setPermissions(Set.of(Permission.DELETE));
-//            }if(20<=count&&count<25){
-//                user.setName("Feruza");
-//                user.setUsername("Feruza_Fazilova"+ count);
-//                user.setPassword("123");
-//                user.setRoles(Set.of(Role.ACCOUNTANT));
-//                user.setPermissions(Set.of(Permission.EDIT));
-//            }
-//            userService.create(user);
-//            count++;
-//        }
+
         return userService.create(
                 new UserRequest("Khamroz", "admin", "1", Set.of(Role.ADMIN, Role.SUPER_ADMIN), perm));
     }

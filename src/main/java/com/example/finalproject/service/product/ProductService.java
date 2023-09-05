@@ -133,17 +133,6 @@ public class ProductService implements BaseService<BaseResponse<ProductResponse>
                 .build();
     }
 
-    public BaseResponse<List<ProductResponse>> getListProductsByCategoryId(UUID categoryId) {
-        return BaseResponse.<List<ProductResponse>>builder()
-                .data(modelMapper
-                        .map(productRepository.getProductEntitiesByCategory_Id(categoryId),
-                                new TypeToken<List<ProductResponse>>() {
-                                }.getType()))
-                .message("success")
-                .status(200)
-                .build();
-    }
-
     public BaseResponse<List<ProductResponse>> findAll() {
         List<ProductEntity> list = productRepository.findAll();
         return BaseResponse.<List<ProductResponse>>builder()
@@ -153,11 +142,6 @@ public class ProductService implements BaseService<BaseResponse<ProductResponse>
                         new TypeToken<List<ProductResponse>>() {
                         }.getType()))
                 .build();
-
-//     public List<ProductResponse> getListByCategoryId(UUID categoryId) {
-//        return productRepository.findProductEntityByCategory_Id(categoryId).stream()
-//                 .map((product) -> modelMapper.map(product, ProductResponse.class))
-//                 .collect(Collectors.toList());
     }
 
     public List<ProductResponse> findByPage(Optional<Integer> page, Optional<Integer> size) {
@@ -288,56 +272,47 @@ public class ProductService implements BaseService<BaseResponse<ProductResponse>
                 .status(400)
                 .build();
     }
+//                userService.updateBalance(order.getUser().getId(),
+//                        order.getAmount() * order.getProduct().getPrice());
 
+//                BaseResponse<ProductResponse> response =
+//                        updateProduct(order.getAmount(), order.getProduct().getId());
+//                if (response.getStatus() == 400) {
+//                    return BaseResponse.<OrderResponse>builder()
+//                            .message(response.getMessage())
+//                            .status(400)
+//                            .build();
+//                }
+//                historyService.create(
+//                        HistoryRequest.builder()
+//                                .productName(order.getProduct().getName())
+//                                .price(order.getProduct().getPrice())
+//                                .totalPrice(order.getAmount() * order.getProduct().getPrice())
+//                                .amount(order.getAmount())
+//                                .user(order.getUser())
+//                                .build()
+//                );
+//                    updateHistory(historyService.getUserHistories(
+//                                    update.getUser().getChatId()),
+//                            update.getProduct().getName(),
+//                            update.getUser().getId(),
+//                            amount, amount * update.getProduct().getPrice());
     public BaseResponse<OrderResponse> order(String data) {
         BaseResponse<OrderResponse> orderResponse = orderService.getById(UUID.fromString(data));
-        Optional<OrderEntity> orderEntity = orderRepository.findOrderEntityByStateEqualsOrdered(orderResponse.getData().getUser().getId(),
-                orderResponse.getData().getProduct().getId());
 
         if (orderResponse.getStatus() != 400) {
             OrderResponse order = orderResponse.getData();
             if (order.getAmount() * order.getProduct().getPrice() < order.getUser().getBalance()) {
-                userService.updateBalance(order.getUser().getId(),
-                        order.getAmount() * order.getProduct().getPrice());
-
-                BaseResponse<ProductResponse> response =
-                        updateProduct(order.getAmount(), order.getProduct().getId());
-                if (response.getStatus() == 400) {
+                 if (order.getAmount() < order.getProduct().getAmount()) {
+                     orderRepository.updateOrderState(orderResponse.getData().getId());
                     return BaseResponse.<OrderResponse>builder()
-                            .message(response.getMessage())
-                            .status(400)
-                            .build();
-                }
-                if (orderEntity.isPresent()) {
-                    OrderEntity update = orderEntity.get();
-                    int amount = update.getAmount() + order.getAmount();
-                    orderRepository.updateOrderAmountByStateEqualsOrdered(amount, update.getUser().getId(), update.getProduct().getId());
-                    updateHistory(historyService.getUserHistories(
-                                    update.getUser().getChatId()),
-                            update.getProduct().getName(),
-                            update.getUser().getId(),
-                            amount, amount * update.getProduct().getPrice());
-
-                    orderRepository.deleteById(order.getId());
-                    return BaseResponse.<OrderResponse>builder()
-                            .message("successfully purchased")
+                            .message("Your order successfully saved. Please wait admin's response")
                             .status(200)
                             .build();
                 }
-
-                historyService.create(
-                        HistoryRequest.builder()
-                                .productName(order.getProduct().getName())
-                                .price(order.getProduct().getPrice())
-                                .totalPrice(order.getAmount() * order.getProduct().getPrice())
-                                .amount(order.getAmount())
-                                .user(order.getUser())
-                                .build()
-                );
-                orderRepository.updateOrderState(order.getId());
                 return BaseResponse.<OrderResponse>builder()
-                        .message("successfully purchased")
-                        .status(200)
+                        .message("Product amount not enough")
+                        .status(400)
                         .build();
             }
             return BaseResponse.<OrderResponse>builder()
@@ -373,5 +348,58 @@ public class ProductService implements BaseService<BaseResponse<ProductResponse>
                 return;
             }
         }
+    }
+
+    public BaseResponse<OrderResponse> buyOrUpdate(OrderRequest orderRequest, UUID id) {
+        Optional<OrderEntity> order = orderRepository.findById(id);
+        if (order.isPresent()){
+            OrderEntity map = modelMapper.map(orderRequest, OrderEntity.class);
+            if (Objects.equals(map.getOrderState().name(),"DELIVERED")){
+                if (order.get().getUser().getBalance() > order.get().getAmount() * order.get().getProduct().getPrice()) {
+                    userService.updateBalance(order.get().getUser().getId(),
+                            order.get().getAmount() * order.get().getProduct().getPrice());
+                }
+
+                BaseResponse<ProductResponse> response =
+                        updateProduct(order.get().getAmount(), order.get().getProduct().getId());
+
+                if (response.getStatus() == 400) {
+                    return BaseResponse.<OrderResponse>builder()
+                            .message(response.getMessage())
+                            .status(400)
+                            .build();
+                }
+                historyService.create(
+                        HistoryRequest.builder()
+                                .productName(order.get().getProduct().getName())
+                                .price(order.get().getProduct().getPrice())
+                                .totalPrice(order.get().getAmount() * order.get().getProduct().getPrice())
+                                .amount(order.get().getAmount())
+                                .user(order.get().getUser())
+                                .build()
+                );
+//                    updateHistory(historyService.getUserHistories(
+//                                    update.getUser().getChatId()),
+//                            update.getProduct().getName(),
+//                            update.getUser().getId(),
+                orderRepository.deleteById(map.getId());
+                return BaseResponse.<OrderResponse>builder()
+                        .message("Order delivered")
+                        .status(200)
+                        .build();
+            }
+            else if (Objects.equals(map.getOrderState().name(), "SHIPPING")) {
+                OrderEntity save = orderRepository.save(map);
+                return BaseResponse.<OrderResponse>builder()
+                        .message("Order status successfully changed")
+                        .status(200)
+                        .data(modelMapper.map(save,OrderResponse.class))
+                        .build();
+            }
+        }
+        return BaseResponse.<OrderResponse>builder()
+                .status(400)
+                .message("Order not found")
+                .build();
     }
 }
