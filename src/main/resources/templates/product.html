@@ -36,7 +36,46 @@
         });
     </script>
 </head>
+<style>
+    #snackbar {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        border: 2px solid #856404;
+        background-color: #fff3cd;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 70%;
+        top: 30px;
+        font-size: 17px;
+    }
+
+    #snackbar.show {
+        color: #856404;
+        visibility: visible;
+        -webkit-animation: fadein 0.8s, fadeout 0.8s 4s;
+        animation: fadein 0.8s, fadeout 0.8s 4s;
+    }
+</style>
 <body>
+
+
+<div th:if="${message != null}">
+    <div id="snackbar" th:text="${message}"></div>
+</div>
+
+<script>
+    var x = document.getElementById("snackbar");
+    x.className = "show";
+    setTimeout(function () {
+        x.className = x.className.replace("show", "");
+    }, 3000);
+</script>
+
 <input type="checkbox" id="active">
 <label for="active" class="menu-btn"><span></span></label>
 <label for="active" class="close"></label>
@@ -84,8 +123,8 @@
                 </div>
 
 
-                <button type="button" class="btn btn-info add-new" data-toggle="modal" data-target="#addProduct">
-                    <i class="fa fa-plus"></i> Add New
+                <button type="button" class="btn btn-info add-new" style="margin-top: 20px;" data-toggle="modal" data-target="#addProduct">
+                    <i class="fa fa-plus" ></i> Add New
                 </button>
 
                 <!-- Add New Modal -->
@@ -318,18 +357,18 @@
                     </tbody>
                 </table>
             </div>
-            <div class="clearfix">
-                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                <ul class="pagination">
-                    <li class="page-item disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
-                    <li class="page-item"><a href="#" class="page-link">1</a></li>
-                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
-                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                    <li class="page-item"><a href="#" class="page-link">5</a></li>
-                    <li class="page-item"><a href="#" class="page-link"><i class="fa fa-angle-double-right"></i></a></li>
-                </ul>
-            </div>
+<!--            <div class="clearfix">-->
+<!--                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>-->
+<!--                <ul class="pagination">-->
+<!--                    <li class="page-item disabled"><a href="#"><i style="margin-top: -15px;" class="fa fa-angle-double-left"></i></a></li>-->
+<!--                    <li class="page-item"><a href="#" class="page-link">1</a></li>-->
+<!--                    <li class="page-item"><a href="#" class="page-link">2</a></li>-->
+<!--                    <li class="page-item active"><a href="#" class="page-link">3</a></li>-->
+<!--                    <li class="page-item"><a href="#" class="page-link">4</a></li>-->
+<!--                    <li class="page-item"><a href="#" class="page-link">5</a></li>-->
+<!--                    <li class="page-item"><a href="#" class="page-link"><i style="margin-top: -15px;" class="fa fa-angle-double-right"></i></a></li>-->
+<!--                </ul>-->
+<!--            </div>-->
         </div>
     </div>
 </div>

@@ -15,8 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductRequest {
-    @NotEmpty
-    @NotNull
     @Pattern(regexp = "^[A-Za-z]+$", message = "name is not valid")
     private String name;
     private Double price;

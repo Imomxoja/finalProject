@@ -5,6 +5,29 @@
     font-family: 'Lato', sans-serif;
     font-family: 'Oswald', sans-serif;
 }
+#snackbar {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        border: 2px solid #856404;
+        background-color: #fff3cd;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 70%;
+        top: 30px;
+        font-size: 17px;
+    }
+
+    #snackbar.show {
+        color: #856404;
+        visibility: visible;
+        -webkit-animation: fadein 0.8s, fadeout 0.8s 4s;
+        animation: fadein 0.8s, fadeout 0.8s 4s;
+    }
 .wrapper{
     position: fixed;
     z-index: 10;

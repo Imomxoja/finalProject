@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,10 +24,13 @@ public class EmployeeController {
     private final UserService userService;
 
     @PostMapping("/add")
-    public String updateEmployee(@ModelAttribute UserRequest userRequest, Model model) {
+    public ModelAndView updateEmployee(@ModelAttribute UserRequest userRequest, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ModelAndView view = new ModelAndView("employees");
         BaseResponse<UserResponse> response = userService.create(userRequest);
-        model.addAttribute("response", response.getMessage());
-        return "redirect:/dashboard/employees";
+        view.addObject("message", response.getMessage());
+        view.addObject("response", userService.findAll(authentication.getName()));
+        return view;
     }
 
     @GetMapping
@@ -53,8 +57,12 @@ public class EmployeeController {
     }
 
     @PostMapping("/update")
-    public String updateUser(@RequestParam("id") UUID id, @ModelAttribute UserRequest userRequest) {
-        userService.update(userRequest, id);
-        return "redirect:/dashboard/employees";
+    public ModelAndView updateUser(@RequestParam("id") UUID id, @ModelAttribute UserRequest userRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ModelAndView view = new ModelAndView("employees");
+        BaseResponse<UserResponse> update = userService.update(userRequest, id);
+        view.addObject("message", update.getMessage());
+        view.addObject("response", userService.findAll(authentication.getName()));
+        return view;
     }
 }

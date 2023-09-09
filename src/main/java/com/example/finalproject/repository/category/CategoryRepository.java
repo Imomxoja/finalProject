@@ -30,7 +30,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> 
 
     @Query("SELECT c FROM category c WHERE LOWER(c.type) = LOWER(:keyword) AND c.parent = :parentObj")
     List<CategoryEntity> searchKeywordForChild(@Param("keyword") String keyword, @Param("parentObj") CategoryEntity parentObj);
-//d
     @Transactional
     @Modifying
     @Query("update category c set c.type = :type where c.id = :id")

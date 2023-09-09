@@ -102,7 +102,7 @@ public class OrderService implements BaseService<BaseResponse<OrderResponse>, Or
 
     public List<OrderResponse> findAllStateNotInCart(){
         return orderRepository
-                .findAllByStateNotInCart().stream()
+                .findAllByState().stream()
                 .map((order) -> mapper.map(order, OrderResponse.class))
                 .collect(Collectors.toList());
     }

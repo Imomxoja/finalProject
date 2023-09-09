@@ -22,11 +22,18 @@ import java.util.stream.Collectors;
 public class CategoryService implements BaseService<BaseResponse<CategoryResponse>, CategoryRequest> {
     private final CategoryRepository repository;
     private final ModelMapper mapper;
-//d
+
     @Override
     public BaseResponse<CategoryResponse> create(CategoryRequest categoryRequest) {
         CategoryEntity category = new CategoryEntity();
         category.setType(categoryRequest.getType());
+
+        if (!categoryRequest.getType().matches("^[A-Za-z]+$")) {
+            return BaseResponse.<CategoryResponse>builder()
+                    .message("Category type isn't valid")
+                    .status(400)
+                    .build();
+        }
 
         if (repository.existsByType(category.getType())) {
             return BaseResponse.<CategoryResponse>builder()
@@ -64,6 +71,13 @@ public class CategoryService implements BaseService<BaseResponse<CategoryRespons
 
     @Override
     public BaseResponse<CategoryResponse> update(CategoryRequest categoryRequest, UUID id) {
+        if (!categoryRequest.getType().matches("^[A-Za-z]+$")) {
+            return BaseResponse.<CategoryResponse>builder()
+                    .message("Category type isn't valid")
+                    .status(400)
+                    .build();
+        }
+
         Optional<CategoryEntity> category = repository.findById(id);
         if (category.isPresent()) {
             if (categoryRequest.getParentId() != null) {
@@ -71,7 +85,7 @@ public class CategoryService implements BaseService<BaseResponse<CategoryRespons
                 category.get().setType(categoryRequest.getType());
                 repository.save(category.get());
                 return BaseResponse.<CategoryResponse>builder()
-                        .message("Success")
+                        .message("Successfully updated")
                         .status(200)
                         .data(mapper.map(category, CategoryResponse.class))
                         .build();
@@ -79,13 +93,13 @@ public class CategoryService implements BaseService<BaseResponse<CategoryRespons
             if (!categoryRequest.getType().isBlank()) {
                 repository.updateCategoryType(categoryRequest.getType(), id);
                 return BaseResponse.<CategoryResponse>builder()
-                        .message("Success")
+                        .message("Successfully updated")
                         .status(200)
                         .data(mapper.map(category, CategoryResponse.class))
                         .build();
             }
             return BaseResponse.<CategoryResponse>builder()
-                    .message("fail")
+                    .message("failed")
                     .status(400)
                     .build();
         }
@@ -199,6 +213,18 @@ public class CategoryService implements BaseService<BaseResponse<CategoryRespons
                         new TypeToken<List<CategoryResponse>>() {
                         }.getType()))
                 .build();
+    }
+
+    public BaseResponse<List<CategoryResponse>> getChildCategoriesWithChildId(UUID id) {
+        Optional<CategoryEntity> childCategory = repository.findById(id);
+
+        List<CategoryEntity> childCategories =
+                repository.findCategoryEntityByParentId(childCategory.get().getParent().getId());
+
+        return BaseResponse.<List<CategoryResponse>>builder().data(
+                mapper.map(childCategories, new TypeToken<List<CategoryResponse>>() {
+                }.getType())).build();
+
     }
 }
 

@@ -36,6 +36,17 @@
   </script>
 </head>
 <body>
+<div th:if="${message != null}">
+  <div id="snackbar" th:text="${message}"></div>
+</div>
+
+<script>
+  var x = document.getElementById("snackbar");
+  x.className = "show";
+  setTimeout(function () {
+      x.className = x.className.replace("show", "");
+  }, 3000);
+</script>
 <input type="checkbox" id="active">
 <label for="active" class="menu-btn"><span></span></label>
 <label for="active" class="close"></label>
@@ -83,7 +94,7 @@
         </div>
 
 
-        <button type="button" class="btn btn-info add-new" data-toggle="modal" data-target="#addChildCategory">
+        <button type="button" class="btn btn-info add-new" style="margin-top: 20px;" data-toggle="modal" data-target="#addChildCategory">
           <i class="fa fa-plus"></i> Add New
         </button>
 
@@ -123,8 +134,8 @@
           <tr>
             <th>#</th>
             <th>Type <i class="fa fa-sort"></i></th>
-            <th>Created Date</th>
             <th>Created by</th>
+            <th>Created Date</th>
             <th>Actions</th>
           </tr>
           </thead>
@@ -217,8 +228,8 @@
                           <label for="editName">Type:</label>
                           <input type="text" class="form-control" name="type" id="editName">
                         </div>
-                        <input th:value="${parentId}" type="hidden" name="parent"
-                               id="parentId">
+<!--                        <input th:value="${parentId}" type="hidden" name="parent"-->
+<!--                               id="parentId">-->
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary"
                                   data-dismiss="modal">Close
@@ -271,18 +282,18 @@
           </tbody>
         </table>
       </div>
-      <div class="clearfix">
-        <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-        <ul class="pagination">
-          <li class="page-item disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
-          <li class="page-item"><a href="#" class="page-link">1</a></li>
-          <li class="page-item"><a href="#" class="page-link">2</a></li>
-          <li class="page-item active"><a href="#" class="page-link">3</a></li>
-          <li class="page-item"><a href="#" class="page-link">4</a></li>
-          <li class="page-item"><a href="#" class="page-link">5</a></li>
-          <li class="page-item"><a href="#" class="page-link"><i class="fa fa-angle-double-right"></i></a></li>
-        </ul>
-      </div>
+<!--      <div class="clearfix">-->
+<!--        <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>-->
+<!--        <ul class="pagination">-->
+<!--          <li class="page-item disabled"><a href="#"><i style="margin-top: -15x;" class="fa fa-angle-double-left"></i></a></li>-->
+<!--          <li class="page-item"><a href="#" class="page-link">1</a></li>-->
+<!--          <li class="page-item"><a href="#" class="page-link">2</a></li>-->
+<!--          <li class="page-item active"><a href="#" class="page-link">3</a></li>-->
+<!--          <li class="page-item"><a href="#" class="page-link">4</a></li>-->
+<!--          <li class="page-item"><a href="#" class="page-link">5</a></li>-->
+<!--          <li class="page-item"><a href="#" class="page-link"><i style="margin-top: -15x;" class="fa fa-angle-double-right"></i></a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
     </div>
   </div>
 </div>

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class BaseEntityListener {
     @PrePersist
     public void prePersist(BaseEntity entity) {
-
         entity.setCreatedBy(getAuthorizedName());
     }
     @PreUpdate
@@ -21,7 +20,7 @@ public class BaseEntityListener {
     public String getAuthorizedName() {
         Authentication user = SecurityContextHolder.getContext().getAuthentication();
         if (user == null) {
-            return "Telegram bot";
+            return "Telegram user";
         }
         return user.getName();
     }

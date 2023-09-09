@@ -54,10 +54,26 @@ public class UserService implements BaseService<BaseResponse<UserResponse>, User
                 user.setName(userRequest.getName());
             }
             if (StringUtils.isNotBlank(userRequest.getUsername())) {
-                user.setUsername(userRequest.getUsername());
+                if (userRepository.existsByUsername(userRequest.getUsername()) ||
+                        !userRequest.getUsername().matches("^[A-Za-z]+$")) {
+                    return BaseResponse.<UserResponse>builder()
+                            .message("Username not unique or not valid")
+                            .status(400)
+                            .build();
+                } else {
+                    user.setUsername(userRequest.getUsername());
+                }
             }
             if (StringUtils.isNotBlank(userRequest.getPassword())) {
-                user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+                if (!userRequest.getPassword().matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$)")
+                        || userRequest.getPassword().length() < 8) {
+                    return BaseResponse.<UserResponse>builder()
+                            .message("password not valid")
+                            .status(400)
+                            .build();
+                } else {
+                    user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+                }
             }
             if (Objects.nonNull(userRequest.getRoles())) {
                 user.setRoles(userRequest.getRoles());
@@ -95,7 +111,8 @@ public class UserService implements BaseService<BaseResponse<UserResponse>, User
                 .status(200)
                 .message("success")
                 .data(modelMapper.map(userEntities,
-                        new TypeToken<List<UserResponse>>(){}.getType()))
+                        new TypeToken<List<UserResponse>>() {
+                        }.getType()))
                 .build();
     }
 
@@ -132,7 +149,7 @@ public class UserService implements BaseService<BaseResponse<UserResponse>, User
     }
 
     public BaseResponse<List<UserResponse>> findAllEmployees() {
-        List<Role> excludedRoles = Arrays.asList(Role.USER);
+        List<Role> excludedRoles = List.of(Role.USER);
         List<UserEntity> userEntities = userRepository.findAllUsersExceptRoles(excludedRoles);
         return BaseResponse.<List<UserResponse>>builder()
                 .status(200)
@@ -269,6 +286,31 @@ public class UserService implements BaseService<BaseResponse<UserResponse>, User
 
     public void updateBalance(UUID id, double minusAmount) {
         userRepository.cutUserBalance(id, minusAmount);
+    }
+
+    public BaseResponse<List<UserResponse>> findAll() {
+        List<UserEntity> all = userRepository.findAll();
+        List<UserResponse> result = new ArrayList<>();
+
+        for (UserEntity userEntity : all) {
+            UserResponse user = UserResponse.builder()
+                    .balance(userEntity.getBalance())
+                    .id(userEntity.getId())
+                    .createdDate(userEntity.getCreatedDate())
+                    .enabled(userEntity.getEnabled())
+                    .lastModifiedBy(userEntity.getLastModifiedBy())
+                    .roles(userEntity.getRoles())
+                    .name(userEntity.getName())
+                    .password(userEntity.getPassword())
+                    .username(userEntity.getUsername())
+                    .permissions(userEntity.getPermissions())
+                    .updatedDate(userEntity.getUpdatedDate()).build();
+
+            result.add(user);
+        }
+        return BaseResponse.<List<UserResponse>>builder()
+                .data(result)
+                .build();
     }
 }
 

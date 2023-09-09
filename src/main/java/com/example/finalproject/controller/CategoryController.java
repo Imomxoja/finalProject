@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -29,10 +31,12 @@ public class CategoryController {
         return "categories";
     }
     @PostMapping("/add")
-    public String addCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
+    public ModelAndView addCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
+        ModelAndView view = new ModelAndView("categories");
         BaseResponse<CategoryResponse> response = categoryService.create(categoryRequest);
-        model.addAttribute("categories", response.getMessage());
-        return "redirect:/dashboard/categories";
+        view.addObject("message", response.getMessage());
+        view.addObject("categories", categoryService.findAll().getData());
+        return view;
     }
     @PostMapping("/delete")
     public String deleteCategory(@RequestParam("id") UUID id) {
@@ -40,9 +44,13 @@ public class CategoryController {
         return "redirect:/dashboard/categories";
     }
     @PostMapping("/update")
-    public String updateCategory(@RequestParam("id") UUID id, @ModelAttribute CategoryRequest categoryRequest) {
-        categoryService.update(categoryRequest, id);
-        return "redirect:/dashboard/categories";
+    public ModelAndView updateCategory(@RequestParam("id") UUID id, @ModelAttribute CategoryRequest categoryRequest) {
+        ModelAndView view = new ModelAndView("categories");
+
+        BaseResponse<CategoryResponse> update = categoryService.update(categoryRequest, id);
+        view.addObject("message", update.getMessage());
+        view.addObject("categories", categoryService.getParentCategories());
+        return view;
     }
 
     @GetMapping("/children/{categoryId}")
@@ -60,15 +68,20 @@ public class CategoryController {
     }
     //ff
     @PostMapping("/children/add")
-    public String addChildCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
+    public ModelAndView addChildCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
+        ModelAndView view = new ModelAndView("categories/children/" + categoryRequest.getParentId());
         BaseResponse<CategoryResponse> response = categoryService.create(categoryRequest);
-        model.addAttribute("categories", response.getMessage());
-        return "redirect:/dashboard/categories/children/" + categoryRequest.getParentId();
+        view.addObject("message", response.getMessage());
+        view.addObject("categories", categoryService.findAll().getData());
+        return view;
     }
     @PostMapping("/children/update")
-    public String updateChildCategory(@RequestParam("id") UUID id, @RequestParam("parent") UUID parentId, @ModelAttribute CategoryRequest categoryRequest) {
-        categoryService.update(categoryRequest, id);
-        return "redirect:/dashboard/categories/children/" + parentId;
+    public ModelAndView updateChildCategory(@RequestParam("id") UUID id, @ModelAttribute CategoryRequest categoryRequest) {
+        ModelAndView view = new ModelAndView("category-child");
+        BaseResponse<CategoryResponse> update = categoryService.update(categoryRequest, id);
+        view.addObject("message", update.getMessage());
+        view.addObject("categories", categoryService.getChildCategoriesWithChildId(id).getData());
+        return view;
     }
     @PostMapping("/children/delete")
     public String deleteChildCategory(@RequestParam("id") UUID id, @RequestParam("parent") UUID parentId) {
