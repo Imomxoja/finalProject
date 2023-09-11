@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 public class CategoryResponse {
     private String type;
-    private CategoryEntity parentId;
+    private CategoryEntity parent;
     private UUID id;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;

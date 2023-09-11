@@ -48,8 +48,9 @@ public class CategoryService implements BaseService<BaseResponse<CategoryRespons
             if (byId.isPresent()) {
                 try {
                     category.setParent(byId.get());
-                    repository.save(category);
+                    CategoryEntity save = repository.save(category);
                     return BaseResponse.<CategoryResponse>builder()
+                            .data(mapper.map(save, CategoryResponse.class))
                             .message("Child category added")
                             .status(200)
                             .build();

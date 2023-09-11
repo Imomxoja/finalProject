@@ -66,13 +66,14 @@ public class CategoryController {
 
         return "category-child";
     }
-    //ff
+
     @PostMapping("/children/add")
     public ModelAndView addChildCategory(@ModelAttribute CategoryRequest categoryRequest, Model model) {
-        ModelAndView view = new ModelAndView("categories/children/" + categoryRequest.getParentId());
+        ModelAndView view = new ModelAndView("category-child");
         BaseResponse<CategoryResponse> response = categoryService.create(categoryRequest);
         view.addObject("message", response.getMessage());
-        view.addObject("categories", categoryService.findAll().getData());
+        view.addObject("parentId", response.getData().getParent().getId());
+        view.addObject("categories", categoryService.getChildCategoriesWithChildId(response.getData().getId()).getData());
         return view;
     }
     @PostMapping("/children/update")
